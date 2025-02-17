@@ -29,22 +29,18 @@ if uploaded_file is not None:
     st.write(f"Original Image Shape: {img.shape}")  # Check original shape
 
     # Preprocess the image before feeding it into the model
-    img_resized = cv2.resize(img, (64, 64))  # Resize to match the input shape of the model (64x64)
+    img_resized = cv2.resize(img, (28, 28))  # Resize to match the input shape of the model (28x28)
     st.write(f"Resized Image Shape: {img_resized.shape}")  # Check resized shape
     
     img_resized = img_resized / 255.0  # Normalize the image
     st.write(f"Normalized Image Shape: {img_resized.shape}")  # Check shape after normalization
     
-    img_resized = np.expand_dims(img_resized, axis=0)  # Add batch dimension to make it (1, 64, 64, 3)
+    img_resized = np.expand_dims(img_resized, axis=0)  # Add batch dimension to make it (1, 28, 28, 3)
     st.write(f"Final Image Shape: {img_resized.shape}")  # Check final shape
-    
-    # Flatten the image if the model expects a flattened input
-    img_flattened = img_resized.reshape(1, -1)  # Flatten to (1, 64*64*3) = (1, 12288)
-    st.write(f"Flattened Image Shape: {img_flattened.shape}")  # Check flattened shape
     
     # Predict the character
     try:
-        prediction = model.predict(img_flattened)
+        prediction = model.predict(img_resized)
         predicted_class = np.argmax(prediction)
         predicted_character = le.inverse_transform([predicted_class])[0]
 
