@@ -6,7 +6,7 @@ from sklearn.preprocessing import LabelEncoder
 import matplotlib.pyplot as plt
 
 # Load the model and label encoder
-model = load_model("best_braille_model_with_class_weights.keras")  # Ensure correct path to your model
+model = load_model("best_braille_model_with_class_weights.keras")  # Correct model path
 le = LabelEncoder()
 le.classes_ = np.array([chr(i) for i in range(65, 91)])  # A-Z ASCII uppercase letters
 
