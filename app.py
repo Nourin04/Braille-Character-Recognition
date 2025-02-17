@@ -23,7 +23,7 @@ if uploaded_file is not None:
     img = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
     # Display the uploaded image
-    st.image(img, channels="BGR", caption="Uploaded Image", use_column_width=True)
+    st.image(img, channels="BGR", caption="Uploaded Image", use_container_width=True)
 
     # Check and display the shape of the uploaded image
     st.write(f"Original Image Shape: {img.shape}")  # Check original shape
