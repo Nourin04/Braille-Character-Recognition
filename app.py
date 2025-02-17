@@ -28,7 +28,7 @@ if uploaded_file is not None:
     img = np.expand_dims(img, axis=0)  # Add batch dimension
     
     # Display the image
-    st.image(uploaded_file, caption="Uploaded Image.", use_column_width=True)
+    st.image(uploaded_file, caption="Uploaded Image.", use_container_width=True)
     
     # Predict the character
     prediction = model.predict(img)
