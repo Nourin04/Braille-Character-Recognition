@@ -5,35 +5,45 @@ from tensorflow.keras.models import load_model
 from sklearn.preprocessing import LabelEncoder
 import matplotlib.pyplot as plt
 
-# Load the trained model
-model = load_model("best_braille_model_with_class_weights.keras")
-
-# Load Label Encoder (assuming it's saved or defined)
+# Load the model and label encoder
+model = load_model("best_braille_model_with_class_weights.keras")  # Ensure correct path to your model
 le = LabelEncoder()
 le.classes_ = np.array([chr(i) for i in range(65, 91)])  # A-Z ASCII uppercase letters
 
-# Streamlit app setup
+# Title and description for the app
 st.title("Braille Character Recognition")
+st.write("Upload an image of a Braille character, and the model will predict the corresponding letter.")
 
-# Upload an image file
-uploaded_file = st.file_uploader("Choose a Braille image...", type=["jpg", "jpeg", "png"])
+# File uploader for image
+uploaded_file = st.file_uploader("Choose a Braille image...", type=["jpg", "png", "jpeg"])
 
 if uploaded_file is not None:
-    # Read the uploaded image
-    img = cv2.imdecode(np.frombuffer(uploaded_file.read(), np.uint8), 1)
-    
-    # Preprocess the image
-    img = cv2.resize(img, (224, 224))  # Resize to match model input size
-    img = img / 255.0  # Normalize
-    img = np.expand_dims(img, axis=0)  # Add batch dimension
-    
-    # Display the image
-    st.image(uploaded_file, caption="Uploaded Image.", use_container_width=True)
-    
+    # Read and display the uploaded image
+    image = np.array(bytearray(uploaded_file.read()), dtype=np.uint8)
+    img = cv2.imdecode(image, cv2.IMREAD_COLOR)
+
+    # Display the uploaded image
+    st.image(img, channels="BGR", caption="Uploaded Image", use_column_width=True)
+
+    # Preprocess the image before feeding it into the model
+    img_resized = cv2.resize(img, (64, 64))  # Resize to match the input shape of the model (64x64)
+    img_resized = img_resized / 255.0  # Normalize the image
+    img_resized = np.expand_dims(img_resized, axis=0)  # Add batch dimension
+
     # Predict the character
-    prediction = model.predict(img)
-    pred_class = np.argmax(prediction)
-    predicted_character = le.inverse_transform([pred_class])[0]
-    
-    # Show the predicted character
+    prediction = model.predict(img_resized)
+    predicted_class = np.argmax(prediction)
+    predicted_character = le.inverse_transform([predicted_class])[0]
+
+    # Display the result
     st.write(f"🔠 Predicted Braille Character: {predicted_character}")
+
+    # Optional: Display probability of prediction
+    st.write(f"Prediction probabilities: {prediction[0]}")
+    
+    # Plot the image again with prediction result
+    fig, ax = plt.subplots()
+    ax.imshow(img_resized[0])
+    ax.set_title(f"Predicted: {predicted_character}")
+    ax.axis('off')
+    st.pyplot(fig)
