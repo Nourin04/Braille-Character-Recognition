@@ -1,6 +1,3 @@
-
-
-
 import streamlit as st
 import cv2
 import numpy as np
@@ -31,7 +28,10 @@ if uploaded_file is not None:
     # Preprocess the image before feeding it into the model
     img_resized = cv2.resize(img, (64, 64))  # Resize to match the input shape of the model (64x64)
     img_resized = img_resized / 255.0  # Normalize the image
-    img_resized = np.expand_dims(img_resized, axis=0)  # Add batch dimension
+    img_resized = np.expand_dims(img_resized, axis=0)  # Add batch dimension to make it (1, 64, 64, 3)
+
+    # Check the shape of the image after preprocessing
+    st.write(f"Image shape after preprocessing: {img_resized.shape}")  # Should be (1, 64, 64, 3)
 
     # Predict the character
     prediction = model.predict(img_resized)
